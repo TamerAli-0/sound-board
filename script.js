@@ -537,15 +537,15 @@ playRecBtn.addEventListener('click', () => {
 // ===== BEAT GENERATOR =====
 const beatPatterns = {
   trap: {
-    // Kick heavy on 1, ghost kicks, hi-hats rapid fire, snare on 3
-    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,0,0,0],
+    kick:   [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,0,0,0],
     snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
     hihat:  [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
     openhat:[0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,1],
     variations: [
-      { kick: [1,0,0,1, 0,0,1,0, 1,0,0,0, 0,1,0,0] },
-      { hihat: [1,0,1,1, 1,0,1,1, 1,0,1,1, 1,0,1,1] },
-      { kick: [1,0,0,0, 0,0,1,1, 1,0,0,0, 0,0,1,0] },
+      { kick: [1,0,0,1, 0,0,1,0, 1,0,0,0, 0,1,0,0], hihat: [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1] },
+      { kick: [1,0,0,0, 0,0,1,1, 0,0,1,0, 0,0,1,0], openhat: [0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0] },
+      { kick: [1,0,0,0, 0,1,0,0, 1,0,0,1, 0,0,1,0], snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1] },
+      { hihat: [1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1], kick: [1,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0] },
     ]
   },
   boombap: {
@@ -580,13 +580,15 @@ const beatPatterns = {
     ]
   },
   lofi: {
-    kick:   [1,0,0,0, 0,0,0,1, 1,0,0,0, 0,0,0,0],
-    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    hihat:  [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
-    openhat:[0,0,0,0, 0,0,0,0, 0,1,0,0, 0,0,0,0],
+    kick:   [1,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+    hihat:  [1,0,1,0, 0,1,1,0, 1,0,1,0, 0,1,1,0],
+    openhat:[0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,0],
     variations: [
-      { kick: [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,1,0,0] },
-      { hihat: [1,0,0,1, 1,0,0,1, 1,0,0,1, 1,0,0,1] },
+      { kick: [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,1,0,0], snare: [0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0] },
+      { hihat: [1,0,0,1, 0,1,0,0, 1,0,0,1, 0,1,0,1], kick: [1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0] },
+      { kick: [1,0,0,1, 0,0,0,0, 1,0,0,0, 0,0,1,0], hihat: [0,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0] },
+      { snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], openhat: [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0] },
     ]
   }
 };
@@ -595,62 +597,18 @@ let genInterval = null;
 let genStep = 0;
 let genPattern = null;
 
-document.getElementById('generateBtn').addEventListener('click', () => {
-  const style = document.getElementById('genStyle').value;
-  const base = beatPatterns[style];
-
-  // Pick random variations and merge
-  genPattern = {
-    kick: [...base.kick],
-    snare: [...base.snare],
-    hihat: [...base.hihat],
-    openhat: [...base.openhat],
-  };
-
-  // Apply a random variation
-  if (base.variations && base.variations.length > 0) {
-    const variation = base.variations[Math.floor(Math.random() * base.variations.length)];
-    Object.assign(genPattern, variation);
-  }
-
-  // Add random ghost notes for flavor
-  for (let i = 0; i < 16; i++) {
-    if (Math.random() < 0.15 && genPattern.kick[i] === 0) genPattern.kick[i] = 1;
-    if (Math.random() < 0.1 && genPattern.hihat[i] === 0) genPattern.hihat[i] = 1;
-  }
-
-  // Also load into the sequencer visual
-  const rows = ['kick', 'snare', 'hihat', 'openhat'];
-  rows.forEach((name, r) => {
-    if (!seqGrid[r]) seqGrid[r] = new Array(SEQ_STEPS).fill(false);
-    for (let s = 0; s < SEQ_STEPS; s++) {
-      seqGrid[r][s] = genPattern[name][s] === 1;
-      const cell = document.querySelector(`.seq-cell[data-row="${r}"][data-step="${s}"]`);
-      if (cell) cell.classList.toggle('on', seqGrid[r][s]);
-    }
-  });
-
-  // Set BPM based on style
-  const styleBpms = { trap: 140, boombap: 90, house: 125, drill: 145, lofi: 75 };
-  bpm = styleBpms[style] || 120;
-  document.getElementById('bpmValue').textContent = bpm;
-
-  // Switch to drums pack
-  document.querySelectorAll('.pack-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pack-btn[data-pack="drums"]').classList.add('active');
-  currentPack = 'drums';
-  renderPads();
-});
-
-document.getElementById('genPlayBtn').addEventListener('click', () => {
-  if (!genPattern) return;
+function stopGenerator() {
   if (genInterval) { clearInterval(genInterval); genInterval = null; }
+  document.querySelectorAll('.seq-cell.beat').forEach(c => c.classList.remove('beat'));
+}
+
+function playGenerator() {
+  if (!genPattern) return;
+  stopGenerator();
 
   genStep = 0;
   const stepTime = (60 / bpm / 4) * 1000;
   const drumPack = packs.drums;
-
-  // Map: 0=kick, 1=snare, 2=hihat, 3=openhat
   const rowMap = { kick: 0, snare: 1, hihat: 2, openhat: 3 };
 
   genInterval = setInterval(() => {
@@ -665,7 +623,6 @@ document.getElementById('genPlayBtn').addEventListener('click', () => {
         const pad = drumPack[r];
         if (pad) {
           playSound(pad);
-          // Flash pad visual
           const el = padGrid.querySelector(`.pad[data-index="${r}"]`);
           if (el) {
             el.classList.add('active');
@@ -677,12 +634,77 @@ document.getElementById('genPlayBtn').addEventListener('click', () => {
 
     genStep = (genStep + 1) % 16;
   }, stepTime);
+}
+
+document.getElementById('generateBtn').addEventListener('click', () => {
+  // Stop any existing playback
+  stopGenerator();
+  if (seqPlaying) {
+    seqPlaying = false;
+    clearInterval(seqInterval);
+  }
+
+  const style = document.getElementById('genStyle').value;
+  const base = beatPatterns[style];
+
+  // Build the pattern with random variation
+  genPattern = {
+    kick: [...base.kick],
+    snare: [...base.snare],
+    hihat: [...base.hihat],
+    openhat: [...base.openhat],
+  };
+
+  if (base.variations && base.variations.length > 0) {
+    const variation = base.variations[Math.floor(Math.random() * base.variations.length)];
+    Object.keys(variation).forEach(key => {
+      genPattern[key] = [...variation[key]];
+    });
+  }
+
+  // Add random ghost notes for flavor
+  for (let i = 0; i < 16; i++) {
+    if (Math.random() < 0.12 && genPattern.kick[i] === 0) genPattern.kick[i] = 1;
+    if (Math.random() < 0.08 && genPattern.hihat[i] === 0) genPattern.hihat[i] = 1;
+  }
+
+  // Set BPM based on style
+  const styleBpms = { trap: 140, boombap: 90, house: 125, drill: 145, lofi: 75 };
+  bpm = styleBpms[style] || 120;
+  document.getElementById('bpmValue').textContent = bpm;
+
+  // Switch to drums pack first
+  document.querySelectorAll('.pack-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.pack-btn[data-pack="drums"]').classList.add('active');
+  currentPack = 'drums';
+  renderPads();
+
+  // Re-render sequencer with drums pack so cells exist
+  renderSequencer();
+
+  // Now populate the sequencer cells with the generated pattern
+  const rows = ['kick', 'snare', 'hihat', 'openhat'];
+  rows.forEach((name, r) => {
+    for (let s = 0; s < SEQ_STEPS; s++) {
+      seqGrid[r][s] = genPattern[name][s] === 1;
+      const cell = document.querySelector(`.seq-cell[data-row="${r}"][data-step="${s}"]`);
+      if (cell) {
+        if (seqGrid[r][s]) {
+          cell.classList.add('on');
+        } else {
+          cell.classList.remove('on');
+        }
+      }
+    }
+  });
+
+  // Auto-play the generated beat
+  playGenerator();
 });
 
-document.getElementById('genStopBtn').addEventListener('click', () => {
-  if (genInterval) { clearInterval(genInterval); genInterval = null; }
-  document.querySelectorAll('.seq-cell.beat').forEach(c => c.classList.remove('beat'));
-});
+document.getElementById('genPlayBtn').addEventListener('click', playGenerator);
+
+document.getElementById('genStopBtn').addEventListener('click', stopGenerator);
 
 // ===== INIT =====
 renderPads();
