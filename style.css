@@ -322,6 +322,82 @@ body {
 .seq-cell.on { background: var(--accent); border-color: var(--accent2); }
 .seq-cell.beat { box-shadow: 0 0 8px rgba(139,92,246,0.4); }
 
+/* Generator */
+.generator-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.gen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.gen-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gen-header h3 i { color: #f59e0b; }
+
+.gen-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.gen-controls select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+.gen-controls select option { background: var(--bg); }
+
+.gen-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  color: white;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gen-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+.gen-play, .gen-stop {
+  width: 36px;
+  padding: 8px;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+
+.gen-play:hover, .gen-stop:hover { color: var(--accent); border-color: var(--accent); }
+
 /* Record */
 .record-section {
   display: flex;
