@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoundBoard — Interactive Sound Pad</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo">
+        <i class="fas fa-drum"></i>
+        <span>SoundBoard</span>
+      </div>
+      <div class="header-controls">
+        <div class="bpm-control">
+          <label>BPM</label>
+          <button class="bpm-btn" id="bpmDown"><i class="fas fa-minus"></i></button>
+          <span class="bpm-value" id="bpmValue">120</span>
+          <button class="bpm-btn" id="bpmUp"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="master-vol">
+          <i class="fas fa-volume-high"></i>
+          <input type="range" id="masterVol" min="0" max="100" value="80">
+        </div>
+      </div>
+    </header>
+
+    <!-- Sound Pack Selector -->
+    <div class="pack-bar">
+      <button class="pack-btn active" data-pack="drums">Drums</button>
+      <button class="pack-btn" data-pack="synth">Synth</button>
+      <button class="pack-btn" data-pack="fx">FX</button>
+      <button class="pack-btn" data-pack="lofi">Lo-Fi</button>
+    </div>
+
+    <!-- Pad Grid -->
+    <div class="pad-grid" id="padGrid"></div>
+
+    <!-- Sequencer -->
+    <div class="sequencer-section">
+      <div class="seq-header">
+        <h3><i class="fas fa-table-cells"></i> Beat Sequencer</h3>
+        <div class="seq-controls">
+          <button class="seq-btn" id="seqPlay"><i class="fas fa-play"></i></button>
+          <button class="seq-btn" id="seqStop"><i class="fas fa-stop"></i></button>
+          <button class="seq-btn" id="seqClear"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="sequencer" id="sequencer"></div>
+    </div>
+
+    <!-- Record Section -->
+    <div class="record-section">
+      <button class="record-btn" id="recordBtn">
+        <i class="fas fa-circle"></i>
+        <span>Record</span>
+      </button>
+      <button class="play-rec-btn" id="playRecBtn" disabled>
+        <i class="fas fa-play"></i>
+        <span>Play Recording</span>
+      </button>
+    </div>
+
+    <footer class="footer">
+      <p>Built by <a href="https://github.com/TamerAli-0" target="_blank">Tamer Altaweel</a> &mdash; Press keyboard keys to play</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
