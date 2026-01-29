@@ -443,7 +443,7 @@ function renderSequencer() {
   seq.innerHTML = rows.map((p, r) => {
     let html = `<div class="seq-row-label">${p.label}</div>`;
     for (let s = 0; s < SEQ_STEPS; s++) {
-      html += `<div class="seq-cell" data-row="${r}" data-step="${s}"></div>`;
+      html += `<div class="seq-cell row-${r}" data-row="${r}" data-step="${s}"></div>`;
     }
     return html;
   }).join('');
@@ -686,17 +686,17 @@ document.getElementById('generateBtn').addEventListener('click', () => {
   const rows = ['kick', 'snare', 'hihat', 'openhat'];
   rows.forEach((name, r) => {
     for (let s = 0; s < SEQ_STEPS; s++) {
-      seqGrid[r][s] = genPattern[name][s] === 1;
+      const isOn = genPattern[name][s] === 1;
+      seqGrid[r][s] = isOn;
       const cell = document.querySelector(`.seq-cell[data-row="${r}"][data-step="${s}"]`);
       if (cell) {
-        if (seqGrid[r][s]) {
-          cell.classList.add('on');
-        } else {
-          cell.classList.remove('on');
-        }
+        cell.classList.toggle('on', isOn);
       }
     }
   });
+
+  // Scroll sequencer into view so user sees the pattern
+  document.querySelector('.sequencer-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   // Auto-play the generated beat
   playGenerator();
