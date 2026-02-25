@@ -29,4 +29,3 @@ No dependencies, no build tools, no audio files needed.
 
 ## Author
 
-Built by [Tamer Altaweel](https://github.com/TamerAli-0)
